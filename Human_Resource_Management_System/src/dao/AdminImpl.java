@@ -12,6 +12,7 @@ import beanClasses.LeaveRequest;
 import connetion.CreateConnetion;
 import exceptions.DepartmentException;
 import exceptions.EmployeeException;
+import exceptions.LeaveException;
 
 public class AdminImpl implements Admin{
 
@@ -44,7 +45,7 @@ public class AdminImpl implements Admin{
 	}
 
 	@Override
-	public List<Department> viewDepartment() {
+	public List<Department> viewDepartment() throws DepartmentException {
 		// TODO Auto-generated method stub
 		try(Connection con = CreateConnetion.create()){
 			
@@ -63,17 +64,23 @@ public class AdminImpl implements Admin{
 				list.add(d);
 			}
 			
-			
-			return list;
+			if(list.size()>0) {
+				
+				return list;
+			}else {
+				throw new DepartmentException("No department present in Department list");
+			}
 			
 		}catch(SQLException e) {
-		   System.out.println(e.getMessage());
+		   throw new DepartmentException(e.getMessage());
 		}
-		return null;
+//		return null;
 	}
 
+	
+	
 	@Override
-	public String deleteFromDepartmentById(int id) {
+	public String deleteFromDepartmentById(int id) throws DepartmentException {
 		// TODO Auto-generated method stub
 		
 		try(Connection con = CreateConnetion.create()){
@@ -85,18 +92,20 @@ public class AdminImpl implements Admin{
 			if(res > 0) {
 				return "Deleted department successfully";
 			}else {
-				return "No department exist of the id "+id;
+				throw new DepartmentException("No department exist of the id "+id);
 			}
 		}
 		catch(SQLException e){
-			return e.getMessage();
+			throw new DepartmentException(e.getMessage());
 		}
 		
 //		return "";
 	}
 
+	
+	
 	@Override
-	public String deleteFromDepartmentByName(String name) {
+	public String deleteFromDepartmentByName(String name) throws DepartmentException{
 		// TODO Auto-generated method stub
 		try(Connection con = CreateConnetion.create()){
 			PreparedStatement ps = con.prepareStatement("delete from department where dname = ?");
@@ -105,13 +114,15 @@ public class AdminImpl implements Admin{
 			if(res > 0) {
 				return "Successfully delete department "+name;
 			}else {
-				return "No existing department for name "+name;
+				throw new DepartmentException("No existing department for name "+name);
 			}
 		}catch(SQLException e) {
-			return e.getMessage();
+		 throw new DepartmentException(e.getMessage());
 		}
 	}
 
+	
+	
 	@Override
 	public String addEmployee(String empl_name, int empl_salary, String empl_address, String mobile,
 			int empl_leave_days, String empl_pass, int empl_department, String empl_email, String empl_username)  throws EmployeeException{
@@ -131,9 +142,9 @@ public class AdminImpl implements Admin{
 			
 			int res = ps.executeUpdate();
 			if(res > 0) {
-				msg = "Employee added successfully";
+				msg = "Employee added successfully...";
 			}else {
-			 throw new EmployeeException("Employee is not added please try again");
+			 throw new EmployeeException("Employee is not added please try again...");
 			}
 			
 		}catch(SQLException e) {
@@ -143,7 +154,7 @@ public class AdminImpl implements Admin{
 	}
 
 	@Override
-	public String changeDepartment(int empl_id, int did) {
+	public String changeDepartment(int empl_id, int did) throws DepartmentException {
 		// TODO Auto-generated method stub
 		
 		try(Connection con = CreateConnetion.create()){
@@ -155,13 +166,13 @@ public class AdminImpl implements Admin{
 		  if(res > 0) {
 			  return "Department changed successfully";
 		  }else {
-			  return "No department has changed please try again";
+			  throw new DepartmentException("No department has changed please try again");
 		  }
 		  
 		}catch(SQLException e) {
-			
+			throw new DepartmentException(e.getMessage());
 		}
-		return null;
+//		return null;
 	}
 
 	@Override
@@ -169,20 +180,37 @@ public class AdminImpl implements Admin{
 		// TODO Auto-generated method stub
 	   try(Connection con = CreateConnetion.create()) {
 		   
+		   int pc = 0;
+		   int ac= 0;
+		   
+		   
 		 PreparedStatement ps = con.prepareStatement(" update leave_request lr join employee e  on lr.empl_id = e.empl_id and lr.leave_days_request <= e.empl_leave_days and lr.leave_status = 'pending' set lr.leave_status = 'approved', e.empl_leave_days = e.empl_leave_days - lr.leave_days_request;");
 		   
   		 int res = ps.executeUpdate();
 	     
-  		 PreparedStatement ps2 = con.prepareStatement("delete from leave_request where leave_status = 'approved'");
+  		 PreparedStatement ps3 = con.prepareStatement("select count(*) count from leave_request group by leave_status having leave_status = 'pending'");
+  		 
+  		ResultSet rs = ps3.executeQuery();
+  		  if(rs.next()) {
+  			  pc = rs.getInt("count");
+  		  }
+  		  
+  		  PreparedStatement ps4 = con.prepareStatement("select count(*) count from leave_request group by leave_status having leave_status = 'approved'");
+  		  ResultSet rs2 = ps4.executeQuery();
+  		  
+  		  if(rs2.next()) {
+  			  ac = rs2.getInt("count");
+  				
+  		  }
+  		 
+  		 PreparedStatement ps2 = con.prepareStatement("delete from leave_request");
   		 
   		 ps2.executeUpdate();
   		 
-  		 if(res>0) {
-  			 return "Leave Request have been proccessed successfully!";
+  		
+  			 return ac + " Leave requests has been approved and "+pc+" has been rejected...";
 
-  		 }else {
-  			 return "No request have been approved!";
-  		 }
+  		
   		 
 	   }
 	   catch(SQLException e) {
@@ -192,7 +220,7 @@ public class AdminImpl implements Admin{
 	}
 
 	@Override
-	public List<LeaveRequest> viewLeaveRequest() {
+	public List<LeaveRequest> viewLeaveRequest() throws LeaveException{
 		// TODO Auto-generated method stub
 	   try(Connection con = CreateConnetion.create()) {
 		   
@@ -211,13 +239,15 @@ public class AdminImpl implements Admin{
 		    	LeaveRequest lr = new LeaveRequest(id, ldr, status);
 		    	list.add(lr);
 		    }
-		    
-		    return list;
+		    if(list.size()>0) {
+		    	return list;
+		    }
+		    	throw new LeaveException("No Leave request present...");
 		    
 	   }catch(SQLException e) {
-		   System.out.println(e.getMessage());
+		   throw new LeaveException(e.getMessage());
 	   }
-	   return null;
+//	   return null;
 	}
 
 

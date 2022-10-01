@@ -1,15 +1,15 @@
 package exceptions;
 
-public class EmployeeException extends Exception{
+public class LeaveException extends Exception{
 
-	String message;
+	 String message;
 
-	public EmployeeException(String message) {
+	public LeaveException(String message) {
 		super();
 		this.message = message;
 	}
-	
-	public EmployeeException() {
+	 
+	 public LeaveException() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -20,5 +20,4 @@ public class EmployeeException extends Exception{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
 }

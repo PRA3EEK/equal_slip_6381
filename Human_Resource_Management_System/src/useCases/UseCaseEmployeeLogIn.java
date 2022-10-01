@@ -12,23 +12,24 @@ public class UseCaseEmployeeLogIn {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.println("Enter Employee username");
 		
-		String uname = sc.next();
-		
-		System.out.println("Enter Password");
-		
-		String pass = sc.next();
-		
-		LogInImpl li = new LogInImpl();
 		
 		try {
+			System.out.println("Enter Employee username");
+			
+			String uname = sc.next();
+			
+			System.out.println("Enter Password");
+			
+			String pass = sc.next();
+			
+			LogInImpl li = new LogInImpl();
 			li.loginAsEmployee(uname, pass);
 			System.out.println("Employee logIn successfull....");
-		} catch (EmployeeException e) {
+		} catch (Exception ee) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
-			System.out.println("Employee credentials are wrong!");
+			System.out.println(ee.getMessage());
 		}
 	}
 	

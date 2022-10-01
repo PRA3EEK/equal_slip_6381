@@ -1,14 +1,16 @@
 package dao;
 
-public interface Employee {
+import exceptions.EmployeeException;
 
-	public String changeAddress(int id, String add);
+public interface Employee { 
+
+	public String changeAddress(int id, String add) throws EmployeeException;
 	
-	public String changeMobile(int id, String number);
+	public String changeMobile(int id, String number) throws EmployeeException;
 	
-	public String changePassword(int id, String pass); 
+	public String changePassword(int id, String pass) throws EmployeeException; 
 	
-	public String changeUsername(int id, String username);
+	public String changeUsername(int id, String username) throws EmployeeException;
 	
-	public String requestForLeave(int id, int days);
+	public String requestForLeave(int id, String start_date, String end_date) throws EmployeeException;
 }

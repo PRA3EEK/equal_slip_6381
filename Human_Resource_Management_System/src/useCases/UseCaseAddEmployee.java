@@ -13,6 +13,9 @@ public class UseCaseAddEmployee {
 		
 		Scanner sc = new Scanner(System.in);
 		
+		
+	   String s;
+	try {
 		System.out.println("Enter employee name");
 		String name = sc.nextLine();
 		
@@ -43,15 +46,17 @@ public class UseCaseAddEmployee {
 		
 		AdminImpl ai = new AdminImpl();
 		
-	   String s;
-	try {
 		s = ai.addEmployee(name, sal, add, num, leave, pass, dept, email, uname);
 		System.out.println(s);
-	} catch (EmployeeException e) {
+	} catch (Exception e) {
 		// TODO Auto-generated catch block
 //		e.printStackTrace();
+//		if(e.getMessage()==null) {
+//			System.out.println("There is something wrong with your input please try again with appropriate input...");
+//		}else {
 		System.out.println(e.getMessage());
-	}
+//		}
+		}
 	
 		
 	}

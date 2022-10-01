@@ -15,7 +15,7 @@ public class CreateConnetion {
 		}
 		Connection con = null;
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/prateekchauhan", "root", "prateekchauhan");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/HRMS", "root", "prateekchauhan");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

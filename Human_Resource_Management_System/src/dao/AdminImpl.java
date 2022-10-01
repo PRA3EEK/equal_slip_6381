@@ -8,17 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import beanClasses.Department;
+import beanClasses.LeaveRequest;
 import connetion.CreateConnetion;
+import exceptions.DepartmentException;
+import exceptions.EmployeeException;
 
 public class AdminImpl implements Admin{
 
 	@Override
 	
 	//Inserting department into the department table with all values.
-	public String addIntoDepartment(int id, String location, String name) {
+	public String addIntoDepartment(int id, String location, String name) throws DepartmentException{
 		// TODO Auto-generated method stub
 		try (Connection con = CreateConnetion.create()){
-			PreparedStatement ps = con.prepareStatement("insert into department values (?, ?,?)");
+			PreparedStatement ps = con.prepareStatement("insert into department values (?,?,?)");
 			
 			ps.setInt(1, id);
 			ps.setString(2, location);
@@ -30,12 +33,12 @@ public class AdminImpl implements Admin{
 	  			return "Added department succesfully";
 	  		}
 	  		else {
-	  			return "Department is not added";
+	  		   throw new DepartmentException("Department is not added");
 	  		}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		  return e.getMessage();
+//			e.printStackTrace();
+		   throw new DepartmentException(e.getMessage());
 		}
 		
 	}
@@ -111,12 +114,12 @@ public class AdminImpl implements Admin{
 
 	@Override
 	public String addEmployee(String empl_name, int empl_salary, String empl_address, String mobile,
-			int empl_leave_days, String empl_pass, int empl_department) {
+			int empl_leave_days, String empl_pass, int empl_department, String empl_email, String empl_username)  throws EmployeeException{
 		// TODO Auto-generated method stub
-		
+		String msg;
 		try(Connection con = CreateConnetion.create()){
 			
-			PreparedStatement ps = con.prepareStatement("insert into employee (empl_name, empl_salary, empl_address, empl_mobile, empl_leave_days, empl_pass, empl_department) values (?,?,?,?,?,?,?)");
+			PreparedStatement ps = con.prepareStatement("insert into employee (empl_name, empl_salary, empl_address, empl_mobile, empl_leave_days, empl_pass, empl_department, empl_email, empl_username) values (?,?,?,?,?,?,?,?,?)");
 			
 			ps.setString(1, empl_name);
 			ps.setInt(2, empl_salary);
@@ -128,15 +131,15 @@ public class AdminImpl implements Admin{
 			
 			int res = ps.executeUpdate();
 			if(res > 0) {
-				return "Employee added successfully";
+				msg = "Employee added successfully";
 			}else {
-				return "Employee is not added please try again";
+			 throw new EmployeeException("Employee is not added please try again");
 			}
 			
 		}catch(SQLException e) {
-			return e.getMessage();
+			throw new EmployeeException(e.getMessage());
 		}
-		
+		return msg;
 	}
 
 	@Override
@@ -160,5 +163,63 @@ public class AdminImpl implements Admin{
 		}
 		return null;
 	}
+
+	@Override
+	public String approveLeaveRequests() {
+		// TODO Auto-generated method stub
+	   try(Connection con = CreateConnetion.create()) {
+		   
+		 PreparedStatement ps = con.prepareStatement(" update leave_request lr join employee e  on lr.empl_id = e.empl_id and lr.leave_days_request <= e.empl_leave_days and lr.leave_status = 'pending' set lr.leave_status = 'approved', e.empl_leave_days = e.empl_leave_days - lr.leave_days_request;");
+		   
+  		 int res = ps.executeUpdate();
+	     
+  		 PreparedStatement ps2 = con.prepareStatement("delete from leave_request where leave_status = 'approved'");
+  		 
+  		 ps2.executeUpdate();
+  		 
+  		 if(res>0) {
+  			 return "Leave Request have been proccessed successfully!";
+
+  		 }else {
+  			 return "No request have been approved!";
+  		 }
+  		 
+	   }
+	   catch(SQLException e) {
+		   
+		   return e.getMessage();
+	   }
+	}
+
+	@Override
+	public List<LeaveRequest> viewLeaveRequest() {
+		// TODO Auto-generated method stub
+	   try(Connection con = CreateConnetion.create()) {
+		   
+		    PreparedStatement ps  = con.prepareStatement("select * from leave_request");
+		    
+		    ResultSet rs = ps.executeQuery();
+	    
+		    List<LeaveRequest> list = new ArrayList<>();
+		    
+		    while(rs.next()) {
+		    	
+		    	int id = rs.getInt("empl_id");
+		    	int ldr = rs.getInt("leave_days_request");
+		    	String status = rs.getString("leave_status");
+		    	
+		    	LeaveRequest lr = new LeaveRequest(id, ldr, status);
+		    	list.add(lr);
+		    }
+		    
+		    return list;
+		    
+	   }catch(SQLException e) {
+		   System.out.println(e.getMessage());
+	   }
+	   return null;
+	}
+
+
 
 }

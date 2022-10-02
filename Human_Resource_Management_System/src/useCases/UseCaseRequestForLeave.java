@@ -6,7 +6,7 @@ import dao.EmployeeImpl;
 
 public class UseCaseRequestForLeave {
 
-	public static void main(String[] args) {
+	public static void excFun() {
 		
 		Scanner sc = new Scanner(System.in);
 		

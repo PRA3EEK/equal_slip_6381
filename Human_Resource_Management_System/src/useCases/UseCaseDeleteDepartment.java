@@ -7,7 +7,7 @@ import exceptions.DepartmentException;
 
 public class UseCaseDeleteDepartment {
 
-	public static void main(String[] args) {
+	public static boolean excFun() {
 		
 		Scanner sc = new Scanner(System.in);;
 		
@@ -20,10 +20,12 @@ public class UseCaseDeleteDepartment {
 			
 			AdminImpl ai = new AdminImpl();
 			System.out.println(ai.deleteFromDepartmentById(did));
+			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
 			System.out.println(e.getMessage());
+			return false;
 		}
 	}
 	

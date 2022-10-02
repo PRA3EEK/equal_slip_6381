@@ -9,7 +9,7 @@ import exceptions.EmployeeException;
 public class UseCaseAddEmployee {
 
 	
-	public static void main(String[] args) {
+	public static boolean excFun() {
 		
 		Scanner sc = new Scanner(System.in);
 		
@@ -48,6 +48,7 @@ public class UseCaseAddEmployee {
 		
 		s = ai.addEmployee(name, sal, add, num, leave, pass, dept, email, uname);
 		System.out.println(s);
+		return true;
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 //		e.printStackTrace();
@@ -55,6 +56,7 @@ public class UseCaseAddEmployee {
 //			System.out.println("There is something wrong with your input please try again with appropriate input...");
 //		}else {
 		System.out.println(e.getMessage());
+		return false;
 //		}
 		}
 	

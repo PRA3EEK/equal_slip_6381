@@ -73,6 +73,8 @@ public class LogInImpl implements LogIn{
 			   
 			    
 			    emp = new EmployeeBeanClass(id, name, salary, address, mobile, leave_days, pass, dept, email, uname);
+			  
+			    
 			}
 			else {
 				throw new EmployeeException("No employee with such credentials exist!");

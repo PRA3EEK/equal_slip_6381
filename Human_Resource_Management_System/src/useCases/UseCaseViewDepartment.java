@@ -8,7 +8,7 @@ import exceptions.DepartmentException;
 
 public class UseCaseViewDepartment {
 
-	public static void main(String[] args) {
+	public static void excFun() {
 		
 		AdminImpl ai = new AdminImpl();
 		

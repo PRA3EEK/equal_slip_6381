@@ -9,7 +9,7 @@ public class UseCaseAddInDepartment {
 
 	
 	
-	public static void main(String[] args) {
+	public static boolean excFun() {
 		
 		Scanner sc = new Scanner(System.in);
 		
@@ -26,12 +26,14 @@ public class UseCaseAddInDepartment {
 			
 			AdminImpl ai = new AdminImpl();
 			s = ai.addIntoDepartment(id, loc, depName);
+			System.out.println(s);
+			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
 			
 				System.out.println(e.getMessage());
-			
+			return false;
 			
 		}
 	

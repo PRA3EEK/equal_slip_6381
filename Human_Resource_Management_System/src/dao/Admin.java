@@ -3,6 +3,7 @@ package dao;
 import java.util.List;
 
 import beanClasses.Department;
+import beanClasses.EmployeeBeanClass;
 import beanClasses.LeaveRequest;
 import exceptions.DepartmentException;
 import exceptions.EmployeeException;
@@ -32,6 +33,10 @@ public interface Admin {
  	public String approveLeaveRequests() ;
  	
  	public List<LeaveRequest> viewLeaveRequest () throws LeaveException;
+ 	
+ 	public String DeleteEmployee(int empl_id) throws EmployeeException;
+ 	
+ 	public List<EmployeeBeanClass> ViewEmployees () throws EmployeeException;
  	
 // 	public String addNewDepartment (int id, String location, String name);
  	

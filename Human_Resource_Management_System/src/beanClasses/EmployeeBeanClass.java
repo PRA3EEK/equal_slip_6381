@@ -29,6 +29,12 @@ public class EmployeeBeanClass {
 	public EmployeeBeanClass() {
 		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String toString() {
+		return "EmployeeBeanClass [id=" + id + ", name=" + name + ", salary=" + salary + ", address=" + address
+				+ ", mobile=" + mobile + ", leave_days=" + leave_days + ", password=" + password + ", dept=" + dept
+				+ ", email=" + email + ", username=" + username + "]";
+	}
 	public int getId() {
 		return id;
 	}

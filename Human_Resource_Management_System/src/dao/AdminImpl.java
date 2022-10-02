@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import beanClasses.Department;
+import beanClasses.EmployeeBeanClass;
 import beanClasses.LeaveRequest;
 import connetion.CreateConnetion;
 import exceptions.DepartmentException;
@@ -139,6 +141,8 @@ public class AdminImpl implements Admin{
 			ps.setInt(5, empl_leave_days);
 			ps.setString(6, empl_pass);
 			ps.setInt(7, empl_department);
+			ps.setString(8, empl_email);
+			ps.setString(9, empl_username);
 			
 			int res = ps.executeUpdate();
 			if(res > 0) {
@@ -203,9 +207,7 @@ public class AdminImpl implements Admin{
   				
   		  }
   		 
-  		 PreparedStatement ps2 = con.prepareStatement("delete from leave_request");
-  		 
-  		 ps2.executeUpdate();
+
   		 
   		
   			 return ac + " Leave requests has been approved and "+pc+" has been rejected...";
@@ -235,8 +237,9 @@ public class AdminImpl implements Admin{
 		    	int id = rs.getInt("empl_id");
 		    	int ldr = rs.getInt("leave_days_request");
 		    	String status = rs.getString("leave_status");
-		    	
-		    	LeaveRequest lr = new LeaveRequest(id, ldr, status);
+		    	Date sd = rs.getDate("leave_startDate");
+		    	Date ed = rs.getDate("leave_endDate");
+		    	LeaveRequest lr = new LeaveRequest(id, ldr, status, sd, ed);
 		    	list.add(lr);
 		    }
 		    if(list.size()>0) {
@@ -248,6 +251,50 @@ public class AdminImpl implements Admin{
 		   throw new LeaveException(e.getMessage());
 	   }
 //	   return null;
+	}
+
+	@Override
+	public String DeleteEmployee(int empl_id) throws EmployeeException {
+		// TODO Auto-generated method stub
+		try(Connection con = CreateConnetion.create()){
+			
+			PreparedStatement ps = con.prepareStatement("delete from employee where empl_id = ?");
+			ps.setInt(1, empl_id);
+			int res = ps.executeUpdate();
+	   if(res>0) {
+		   return "Deleted employee successfully...";
+	   }else {
+		   throw new EmployeeException("No Employee with this id is present");
+	   }
+		}catch(SQLException e) {
+			throw new EmployeeException(e.getMessage());
+			
+		}
+	}
+
+	@Override
+	public List<EmployeeBeanClass> ViewEmployees() throws EmployeeException {
+		// TODO Auto-generated method stub
+       try(Connection con = CreateConnetion.create()){
+    	   
+    	   PreparedStatement ps = con.prepareStatement("select * from employee");
+    	   
+    	   ResultSet rs = ps.executeQuery();
+    	   List<EmployeeBeanClass> list = new ArrayList<>();
+    	   while(rs.next()) {
+    		   
+    		   EmployeeBeanClass ebc = new EmployeeBeanClass(rs.getInt("empl_id"), rs.getString("empl_name"), rs.getInt("empl_salary"), rs.getString("empl_address"), rs.getString("empl_mobile"), rs.getInt("empl_leave_days"), rs.getString("empl_pass"), rs.getInt("empl_department"), rs.getString("empl_email"), rs.getString("empl_username"));
+    		   list.add(ebc);
+    	   }
+    	   
+    	   if(list.size()==0) {
+    		   throw new EmployeeException("No Employee is present...");
+    	   }
+    	   return list;
+       }catch(SQLException e) {
+    	   throw new EmployeeException(e.getMessage());
+       }
+      
 	}
 
 

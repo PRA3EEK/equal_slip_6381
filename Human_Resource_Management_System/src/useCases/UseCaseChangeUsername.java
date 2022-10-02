@@ -7,7 +7,7 @@ import exceptions.EmployeeException;
 
 public class UseCaseChangeUsername {
 
-	public static void main(String[] args) {
+	public static void excFun() {
 		
 		Scanner sc = new Scanner(System.in);
 		
